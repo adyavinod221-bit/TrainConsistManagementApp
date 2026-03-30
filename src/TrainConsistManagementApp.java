@@ -2,12 +2,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class Bogie {
-    private String name;
+    private String type;     // Passenger or Goods
+    private String name;     // Sleeper, AC Chair, First Class, Rectangular, Cylindrical
     private int capacity;
 
-    public Bogie(String name, int capacity) {
+    public Bogie(String type, String name, int capacity) {
+        this.type = type;
         this.name = name;
         this.capacity = capacity;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getName() {
@@ -20,29 +26,30 @@ class Bogie {
 
     @Override
     public String toString() {
-        return name + " (Capacity: " + capacity + ")";
+        return name + " (" + type + ", Capacity: " + capacity + ")";
     }
 }
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // Step 1: Create passenger bogies
-        List<Bogie> passengerBogies = new ArrayList<>();
-        passengerBogies.add(new Bogie("Sleeper", 72));
-        passengerBogies.add(new Bogie("AC Chair", 56));
-        passengerBogies.add(new Bogie("First Class", 24));
+        // Step 1: Create bogies (Passenger + Goods)
+        List<Bogie> bogies = new ArrayList<>();
+        bogies.add(new Bogie("Passenger", "Sleeper", 72));
+        bogies.add(new Bogie("Passenger", "AC Chair", 56));
+        bogies.add(new Bogie("Passenger", "First Class", 24));
+        bogies.add(new Bogie("Goods", "Rectangular", 100));
+        bogies.add(new Bogie("Goods", "Cylindrical", 80));
+        bogies.add(new Bogie("Passenger", "Sleeper", 72)); // duplicate type for grouping test
 
-        // Step 2: Apply Stream filter to select bogies with capacity > 60
-        List<Bogie> highCapacityBogies = passengerBogies.stream()
-                .filter(b -> b.getCapacity() > 60)
-                .collect(Collectors.toList());
+        // Step 2: Group bogies by type using Collectors.groupingBy
+        Map<String, List<Bogie>> groupedBogies = bogies.stream()
+                .collect(Collectors.groupingBy(Bogie::getType));
 
-        // Step 3: Display filtered bogies
-        System.out.println("Passenger Bogies with capacity > 60:");
-        highCapacityBogies.forEach(System.out::println);
-
-        // Step 4: Show that original list remains unchanged
-        System.out.println("\nOriginal Passenger Bogie List:");
-        passengerBogies.forEach(System.out::println);
+        // Step 3: Display grouped bogies
+        System.out.println("Grouped Bogies by Type:");
+        groupedBogies.forEach((type, bogieList) -> {
+            System.out.println(type + ":");
+            bogieList.forEach(System.out::println);
+        });
     }
 }
