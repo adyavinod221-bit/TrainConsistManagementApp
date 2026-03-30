@@ -1,55 +1,41 @@
-import java.util.*;
-import java.util.stream.Collectors;
-
-class Bogie {
-    private String type;     // Passenger or Goods
-    private String name;     // Sleeper, AC Chair, First Class, Rectangular, Cylindrical
-    private int capacity;
-
-    public Bogie(String type, String name, int capacity) {
-        this.type = type;
-        this.name = name;
-        this.capacity = capacity;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
-    public String toString() {
-        return name + " (" + type + ", Capacity: " + capacity + ")";
-    }
-}
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // Step 1: Create bogies (Passenger + Goods)
-        List<Bogie> bogies = new ArrayList<>();
-        bogies.add(new Bogie("Passenger", "Sleeper", 72));
-        bogies.add(new Bogie("Passenger", "AC Chair", 56));
-        bogies.add(new Bogie("Passenger", "First Class", 24));
-        bogies.add(new Bogie("Goods", "Rectangular", 100));
-        bogies.add(new Bogie("Goods", "Cylindrical", 80));
-        bogies.add(new Bogie("Passenger", "Sleeper", 72)); // duplicate type for grouping test
+        Scanner scanner = new Scanner(System.in);
 
-        // Step 2: Group bogies by type using Collectors.groupingBy
-        Map<String, List<Bogie>> groupedBogies = bogies.stream()
-                .collect(Collectors.groupingBy(Bogie::getType));
+        // Step 1: Define regex patterns
+        String trainIdRegex = "TRN-\\d{4}";       // Train ID must be TRN- followed by exactly 4 digits
+        String cargoCodeRegex = "PET-[A-Z]{2}";   // Cargo Code must be PET- followed by exactly 2 uppercase letters
 
-        // Step 3: Display grouped bogies
-        System.out.println("Grouped Bogies by Type:");
-        groupedBogies.forEach((type, bogieList) -> {
-            System.out.println(type + ":");
-            bogieList.forEach(System.out::println);
-        });
+        Pattern trainIdPattern = Pattern.compile(trainIdRegex);
+        Pattern cargoCodePattern = Pattern.compile(cargoCodeRegex);
+
+        // Step 2: Get user input
+        System.out.print("Enter Train ID: ");
+        String trainIdInput = scanner.nextLine();
+
+        System.out.print("Enter Cargo Code: ");
+        String cargoCodeInput = scanner.nextLine();
+
+        // Step 3: Validate Train ID
+        Matcher trainIdMatcher = trainIdPattern.matcher(trainIdInput);
+        if (trainIdMatcher.matches()) {
+            System.out.println("Valid Train ID: " + trainIdInput);
+        } else {
+            System.out.println("Invalid Train ID format!");
+        }
+
+        // Step 4: Validate Cargo Code
+        Matcher cargoCodeMatcher = cargoCodePattern.matcher(cargoCodeInput);
+        if (cargoCodeMatcher.matches()) {
+            System.out.println("Valid Cargo Code: " + cargoCodeInput);
+        } else {
+            System.out.println("Invalid Cargo Code format!");
+        }
+
+        scanner.close();
     }
 }
